@@ -1,0 +1,19 @@
+spring:
+  banner:
+    location: classpath:banner/banner.txt
+    image:
+      location: classpath:banner/banner.gif
+      width: 20
+
+logging:
+  level:
+    org.springframework.web: INFO
+    ru.otus.hw4.testingapp: FATAL
+    ru.otus.hw4.testingapp.service: INFO
+
+testapp:
+  csvPath: "${DATACSV:.}"
+  globTemplate: "*.{csv}"
+  separator: ","
+  isCorrectSuffix: "\\ *\\* *$"
+  inputStream: System.in
