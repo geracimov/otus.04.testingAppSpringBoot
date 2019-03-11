@@ -7,6 +7,7 @@ import ru.otus.hw4.testingapp.domain.Question;
 import ru.otus.hw4.testingapp.domain.Result;
 import ru.otus.hw4.testingapp.utils.LocaleHelper;
 
+import java.io.InputStream;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -17,11 +18,17 @@ public class ConsoleUserCommunicator implements UserCommunicator {
     private final MessageSource ms;
     private Locale locale;
 
+    /**
+     * вот тут тоже вопрос, идея подчеркивает inputStream и говорит, что не может провести инъекцию бина типа
+     * InputStream, т.к. их 2.
+     * Здесь не проходит анализа что второй создается при отсутствии первого?
+     * или можно как то иначе указать на этот момент? Ну кроме конкретного имени бина через @Qualifier
+     */
     @Autowired
-    public ConsoleUserCommunicator(TestingService service, MessageSource messageSource) {
+    public ConsoleUserCommunicator(TestingService service, MessageSource messageSource, InputStream inputStream) {
         this.service = service;
         this.ms = messageSource;
-        this.scanner = new Scanner(System.in);
+        this.scanner = new Scanner(inputStream);
         this.locale = Locale.getDefault();
     }
 

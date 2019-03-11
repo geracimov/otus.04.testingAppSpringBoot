@@ -1,9 +1,10 @@
 testapp:
-# не нашел как коннектно сослаться на директорию через
-# подскажите, как правильно указать директорию тестовых ресурсов?
-# это как то должно быть через classpath, но так не сработало и гугл не помог :(
-#  csvPath: classpath: CSVtest
-  csvPath: src/test/resources/CSVtest/
+  # не нашел как коннектно сослаться на директорию через
+  # подскажите, как правильно указать директорию тестовых ресурсов?
+  # это как то должно быть через classpath, но так не сработало и гугл не помог :(
+  #  csvPath: classpath: CSVtest
+  csvPath: classpath:CSVtest
   globTemplate: "*.{csv}"
   separator: ","
   isCorrectSuffix: "\\ *\\* *$"
+  inputFromFile: classpath:InputTest/inputFullData.txt

@@ -12,8 +12,7 @@ logging:
     ru.otus.hw4.testingapp.service: INFO
 
 testapp:
-  csvPath: "${DATACSV:.}"
+  csvPath: file:${DATACSV:.}
   globTemplate: "*.{csv}"
   separator: ","
   isCorrectSuffix: "\\ *\\* *$"
-  inputStream: System.in

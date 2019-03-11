@@ -2,6 +2,7 @@ package ru.otus.hw4.testingapp.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import ru.otus.hw4.testingapp.config.YAMLconfig;
 import ru.otus.hw4.testingapp.domain.Choice;
@@ -45,15 +46,16 @@ public class LocalFileTestDataService implements TestDataService {
     }
 
     private void loadTestList() {
-        if (Files.isDirectory(config.getCsvPath())) {
-            try (DirectoryStream<Path> ds = Files.newDirectoryStream(config.getCsvPath(), config.getGlobTemplate())) {
-                Stream<Path> pathStream = StreamSupport.stream(ds.spliterator(), false);
-                pathStream.map(this::buildTest)
-                          .filter(Objects::nonNull)
-                          .forEach(test -> tests.put(test.getName(), test));
-            } catch (IOException e) {
-                log.error("Error loading tests from directory " + config.getCsvPath(), e);
-            }
+        Resource csvPath = config.getCsvPath();
+        String glob = config.getGlobTemplate();
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(csvPath.getFile()
+                                                                        .toPath(), glob)) {
+            Stream<Path> pathStream = StreamSupport.stream(ds.spliterator(), false);
+            pathStream.map(this::buildTest)
+                      .filter(Objects::nonNull)
+                      .forEach(test -> tests.put(test.getName(), test));
+        } catch (IOException e) {
+            log.error("Error loading tests from directory " + csvPath, e);
         }
     }
 
