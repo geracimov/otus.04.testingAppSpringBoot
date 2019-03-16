@@ -2,7 +2,7 @@ package ru.otus.hw4.testingapp.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -28,19 +28,15 @@ public class InputConfig {
      * чтения с консоли.
      * Подскажите, что я делаю не так? или при этом раз я возвращаю ссылку на объект типа InputStream, пусть и null,
      * то и бин наверно все равно создается? как  прервать создание бина fileInput?
+     *
+     * @since 16/03/2019 вопрос снят, заменил условие создания бина на ConditionalOnResource, в этом случае спринг сам
+     * контроллирует наличие файла.
      */
     @Bean
-    @ConditionalOnProperty(name = "testapp.input-from-file")
-    public InputStream fileInput() {
-        try {
-            Resource res = yamLconfig.getInputFromFile();
-            if (res.isFile()) {
-                return new FileInputStream(res.getFile());
-            }
-        } catch (IOException e) {
-            log.error("Unable configure input stream!", e);
-        }
-        return null;
+    @ConditionalOnResource(resources = {"${testapp.input-from-file}"})
+    public InputStream fileInput() throws IOException {
+        Resource res = yamLconfig.getInputFromFile();
+        return new FileInputStream(res.getFile());
     }
 
     @Bean
