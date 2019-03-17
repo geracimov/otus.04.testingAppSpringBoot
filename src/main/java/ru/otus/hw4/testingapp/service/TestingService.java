@@ -4,6 +4,7 @@ import ru.otus.hw4.testingapp.domain.Question;
 import ru.otus.hw4.testingapp.domain.Result;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
 public interface TestingService {
@@ -20,7 +21,7 @@ public interface TestingService {
 
     boolean doAnswer(Question question, String textAnswer);
 
-    Result getResult();
+    Optional<Result> getResult();
 
     void breakTest();
 }

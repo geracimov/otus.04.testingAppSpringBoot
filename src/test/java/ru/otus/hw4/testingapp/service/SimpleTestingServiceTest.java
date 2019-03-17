@@ -11,6 +11,7 @@ import ru.otus.hw4.testingapp.domain.Result;
 import ru.otus.hw4.testingapp.utils.LocaleHelper;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,8 +49,8 @@ class SimpleTestingServiceTest {
     @Test
     @DisplayName("throw exception on getting next question before start of testing")
     void getNextBeforeStartTest() {
-        assertThrows(IllegalStateException.class, () -> ts.hasNext());
-        assertThrows(IllegalStateException.class, () -> ts.next());
+        assertFalse(ts.hasNext());
+        assertNull(ts.next());
     }
 
     @Test
@@ -93,7 +94,8 @@ class SimpleTestingServiceTest {
     @Test
     @DisplayName("not allow get result before testing finished")
     void getResultBeforeFinish() {
-        assertThrows(IllegalStateException.class, () -> ts.getResult());
+        assertTrue(ts.getResult()
+                     .isEmpty());
     }
 
     @Test
@@ -105,8 +107,10 @@ class SimpleTestingServiceTest {
             Question question = ts.next();
             ts.doAnswer(question, "0");
         }
-        Result res = ts.getResult();
+        Optional<Result> resOpt = ts.getResult();
 
+        assertTrue(resOpt.isPresent());
+        Result res = resOpt.get();
         assertThat(res).isInstanceOf(Result.class);
         assertNotNull(res);
         assertEquals(res.getScore(), 2);

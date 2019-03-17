@@ -11,10 +11,10 @@ import ru.otus.hw4.testingapp.domain.Question;
 import ru.otus.hw4.testingapp.domain.Result;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DisplayName("Communicator service")
@@ -26,10 +26,6 @@ class ConsoleUserCommunicatorTest {
     @Autowired
     private YAMLconfig config;
 
-    /**
-     * подскажите, как моэно для каждого теста подгружать свой файл для входных данных?
-     * Пробовал сделать через сеттер ,но мне кажется нужно делать рефреш контексту, или можно как то иначе?
-     * */
     @BeforeEach
     void init() {
         config.setCsvPath(new ClassPathResource("classpath:InputTest/inputFullData.txt"));
@@ -39,7 +35,9 @@ class ConsoleUserCommunicatorTest {
     @DisplayName("complete test successfully")
     void startSession() {
         uc.startSession();
-        Result res = ts.getResult();
+        Optional<Result> resultOpt = ts.getResult();
+        assertTrue(resultOpt.isPresent());
+        Result res = resultOpt.get();
         assertThat(res).isInstanceOf(Result.class);
         assertEquals(2, res.getScore());
     }

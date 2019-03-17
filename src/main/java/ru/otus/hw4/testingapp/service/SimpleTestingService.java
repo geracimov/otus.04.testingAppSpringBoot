@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.otus.hw4.testingapp.dao.TestDataService;
 import ru.otus.hw4.testingapp.domain.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -69,7 +66,7 @@ public class SimpleTestingService implements TestingService {
     @Override
     public boolean hasNext() {
         if (test == null) {
-            throw new IllegalStateException("Test isn't started.");
+            return false;
         }
         return answers.size() < this.test.getQuestions()
                                          .size();
@@ -94,11 +91,8 @@ public class SimpleTestingService implements TestingService {
     }
 
     @Override
-    public Result getResult() {
-        if (hasNext()) {
-            throw new IllegalStateException("Test is not comleted!");
-        }
-        return calcResult();
+    public Optional<Result> getResult() {
+        return Optional.ofNullable(calcResult());
     }
 
     @Override
@@ -111,6 +105,9 @@ public class SimpleTestingService implements TestingService {
 
 
     private Result calcResult() {
+        if (test == null) {
+            return null;
+        }
         int score = 0;
         for (Answer answer : answers) {
             score += answer.getChoices()
