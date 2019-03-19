@@ -7,9 +7,11 @@ spring:
 
 logging:
   level:
-    org.springframework.web: INFO
-    ru.otus.hw4.testingapp: FATAL
-    ru.otus.hw4.testingapp.service: INFO
+    org:
+      springframework: info
+      jline: error
+    ru.otus.hw4.testingapp: error
+    ru.otus.hw4.testingapp.service: info
 
 testapp:
   csvPath: file:${DATACSV:.}

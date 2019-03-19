@@ -9,6 +9,7 @@ import ru.otus.hw4.testingapp.utils.LocaleHelper;
 
 import java.io.InputStream;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Scanner;
 
 @Service
@@ -18,12 +19,6 @@ public class ConsoleUserCommunicator implements UserCommunicator {
     private final MessageSource ms;
     private Locale locale;
 
-    /**
-     * вот тут тоже вопрос, идея подчеркивает inputStream и говорит, что не может провести инъекцию бина типа
-     * InputStream, т.к. их 2.
-     * Здесь не проходит анализа что второй создается при отсутствии первого?
-     * или можно как то иначе указать на этот момент? Ну кроме конкретного имени бина через @Qualifier
-     */
     @Autowired
     public ConsoleUserCommunicator(TestingService service, MessageSource messageSource, InputStream inputStream) {
         this.service = service;
@@ -68,8 +63,13 @@ public class ConsoleUserCommunicator implements UserCommunicator {
                     accepted = service.doAnswer(q, textAnswer);
                 }
             }
-            Result result = service.getResult();
-            textDialog(message("result", result.getScore(), result.getPrc()));
+            Optional<Result> resultOpt = getResult();
+            if (resultOpt.isPresent()) {
+                Result result = resultOpt.get();
+                textDialog(message("result", result.getScore(), result.getPrc()));
+            } else {
+                textDialog(message("test.is.not.competed"));
+            }
 
             repeatTest =
                     inputDialog(message("test.repeat") + " (" + yes + "/" + no + ")").matches("(?i)" + y + "|" + yes);
@@ -99,15 +99,33 @@ public class ConsoleUserCommunicator implements UserCommunicator {
         }
     }
 
-    private void changeLocale() {
+    @Override
+    public Optional<Result> getResult() {
+        return service.getResult();
+    }
+
+    @Override
+    public boolean resultIsAvail() {
+        return service.getResult()
+                      .isPresent();
+    }
+
+    public void changeLocale() {
         textDialog(message("lang.current", locale, locale.getDisplayLanguage(locale)));
         String lang = inputDialog(message("lang.change", locale.getDisplayLanguage(locale)));
+        changeLocale(lang);
+    }
 
+    public void changeLocale(String lang) {
         if (!lang.isEmpty()) {
             locale = LocaleHelper.getLocale(lang);
             Locale.setDefault(locale);
             textDialog(message("lang.changed", locale.getDisplayLanguage(locale)));
         }
+    }
+
+    public String currentLocale() {
+        return locale.getLanguage();
     }
 
     private String inputDialog(String shownText) {
